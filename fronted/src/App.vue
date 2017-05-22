@@ -6,6 +6,7 @@
 
 <script>
 import {mapActions, mapGetters} from 'vuex'
+import {get} from './common/js/api'
 export default {
 	methods:{
 		...mapActions([
@@ -18,10 +19,9 @@ export default {
 		])
 	},
 	mounted() {
-		this.$http.get("/api/api/user/userInfo").then((res) => {
-      if(res.body.code == 200) {
-        this.setUserInfo(res.body.data);
-        console.log(this.userInfo)
+		get("api/user/userInfo").then((res) => {
+      if(res.code == 200) {
+        this.setUserInfo(res.data);
       } else {
         this.setUserInfo({});
       }

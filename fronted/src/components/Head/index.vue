@@ -1,7 +1,9 @@
 <template>
 	<div class="head">
 		<h1 class="title">MissPuff的博客</h1>
-		<img src="./photo.jpg">
+		<router-link to="/">
+			<img src="./photo.jpg">
+		</router-link>
 		<p>前端小白的成长之路</p>
 	</div>	
 </template>

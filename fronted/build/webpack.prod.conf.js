@@ -86,7 +86,10 @@ var webpackConfig = merge(baseWebpackConfig, {
         to: config.build.assetsSubDirectory,
         ignore: ['.*']
       }
-    ])
+    ]),
+    new webpack.ProvidePlugin({
+      ENV_OPT: config.build.envopt
+    })
   ]
 })
 

@@ -13,11 +13,18 @@
 	      label="用户名"
 	      >
 	    </el-table-column>
+      <el-table-column
+        label="用户性质"
+        >
+        <template scope="scope">
+          <span>{{ scope.row.isAdmin?'管理员':'普通用户' }}</span>
+        </template>
+      </el-table-column>
 	    <el-table-column
         label="操作"
         >
         <template scope="scope">
-          <el-button type="text" size="small" @click="detail(scope.row,scope.$index)">查看</el-button>
+          <el-button type="text" size="small" @click="del(scope.row, scope.$index)">删除</el-button>
         </template>
 	    </el-table-column>
 	  </el-table>
@@ -36,6 +43,7 @@
 </template>
 
 <script>
+import {post} from '../../../common/js/api.js';
   export default {
     data() {
       return {
@@ -56,10 +64,10 @@
               currentPage:1,
               limit:limit
             };
-        this.$http.post("/api/admin/users",pageInfo).then((res) => {
-          if(res.body.code == 200) {
-            this.pageInfo.total = res.body.meta.total;
-            this.usersData = res.body.data;
+        post("admin/users",pageInfo).then((res) => {
+          if(res.code == 200) {
+            this.pageInfo.total = res.meta.total;
+            this.usersData = res.data;
           } else {
             this.$message('用户列表获取失败');
           }
@@ -71,16 +79,16 @@
               currentPage:currentPage,
               limit:this.pageInfo.pageSize
             };
-        this.$http.post("/api/admin/users",pageInfo).then((res) => {
-          if(res.body.code == 200) {
-            this.pageInfo.total = res.body.meta.total;
-            this.usersData = res.body.data;
+        post("admin/users",pageInfo).then((res) => {
+          if(res.code == 200) {
+            this.pageInfo.total = res.meta.total;
+            this.usersData = res.data;
           } else {
             this.$message('用户列表获取失败');
           }
         });
       },
-      detail(row,index){
+      del(row,index) {
         console.log(row, index)
       }
     },
@@ -89,10 +97,10 @@
         currentPage:1,
         limit:this.pageInfo.pageSize
       };
-    	this.$http.post("/api/admin/users",pageInfo).then((res) => {
-    		if(res.body.code == 200) {
-          this.pageInfo.total = res.body.meta.total;
-          this.usersData = res.body.data;
+    	post("admin/users",pageInfo).then((res) => {
+    		if(res.code == 200) {
+          this.pageInfo.total = res.meta.total;
+          this.usersData = res.data;
         } else {
           this.$message('用户列表获取失败');
         }
@@ -100,7 +108,7 @@
     }
   }
 </script>
-<style>
+<style lang="scss" scoped>
 .users{
 	position: absolute;
 	left: 0px;
@@ -108,12 +116,13 @@
 	width: 100%;
 	height: calc(100% - 140px);
 	overflow:auto;
+  .page{
+    position:fixed;
+    width: 100%;
+    bottom: 30px;
+    left: 0px;
+    text-align: center;
+  }
 }
-.page{
-	position:fixed;
-	width: 100%;
-	bottom: 30px;
-	left: 0px;
-	text-align: center;
-}
+
 </style>

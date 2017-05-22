@@ -20,9 +20,13 @@
 	      >
 	    </el-table-column>
 	    <el-table-column
-	      prop="ctime"
 	      label="上传时间"
 	      >
+	      <template scope="scope">
+	      	<span>
+	      		{{scope.row.ctime}}
+	      	</span>
+        </template>
 	    </el-table-column>
 	    <el-table-column
 	      prop="views"
@@ -30,7 +34,7 @@
 	      >
 	    </el-table-column>
 	    <el-table-column
-	      prop="comments"
+	      prop="comment"
 	      label="评论量"
 	      >
 	    </el-table-column>
@@ -43,7 +47,7 @@
         label="操作"
         >
         <template scope="scope">
-          <el-button type="text" size="small" @click="edit(scope.row,scope.$index)">编辑</el-button>
+          <el-button type="text" size="small" @click="edit(scope.row, scope.$index)">编辑</el-button>
         </template>
 	    </el-table-column>
 	  </el-table>
@@ -61,6 +65,8 @@
 	</div>
 </template>
 <script>
+import {formatTime} from '../../../common/js/methods.js';
+import {post} from '../../../common/js/api.js';
 	export default{
 		data(){
 			return {
@@ -79,10 +85,15 @@
         currentPage:1,
         limit:this.pageInfo.pageSize
       };
-    	this.$http.post("/api/artical/list",pageInfo).then((res) => {
-    		if(res.body.code == 200) {
-          this.pageInfo.total = res.body.meta.total;
-          this.articalsData = res.body.data;
+    	post("admin/artical/list",pageInfo).then((res) => {
+    		if(res.code == 200) {
+          this.pageInfo.total = res.meta.total;
+          this.articalsData = res.data.map((item, index) => {
+          	 let itemTrans = Object.assign({}, item);
+          	 itemTrans.ctime = formatTime(item.ctime);
+          	 itemTrans.comment = item.comment.length;
+          	 return itemTrans;
+          });
         } else {
           this.$message('文章获取失败');
         }
@@ -95,7 +106,19 @@
 			        currentPage:1,
 			        limit:limit
 			      };
-			  
+			  post("admin/artical/list",pageInfo).then((res) => {
+	    		if(res.code == 200) {
+	          this.pageInfo.total = res.meta.total;
+	          this.articalsData = res.data.map((item, index) => {
+	          	 let itemTrans = Object.assign({}, item);
+	          	 itemTrans.ctime = formatTime(item.ctime);
+	          	 itemTrans.comment = item.comment.length;
+	          	 return itemTrans;
+	          });
+	        } else {
+	          this.$message('文章获取失败');
+	        }
+	    	})			  
 			},
 			//当前页改变时触发
 			handleCurrentChange(currentPage){
@@ -103,6 +126,19 @@
 			        currentPage:currentPage,
 			        limit:this.pageInfo.pageSize
 			      };
+			  post("admin/artical/list",pageInfo).then((res) => {
+	    		if(res.code == 200) {
+	          this.pageInfo.total = res.meta.total;
+	          this.articalsData = res.data.map((item, index) => {
+	          	 let itemTrans = Object.assign({}, item);
+	          	 itemTrans.ctime = formatTime(item.ctime);
+	          	 itemTrans.comment = item.comment.length;
+	          	 return itemTrans;
+	          });
+	        } else {
+	          this.$message('文章获取失败');
+	        }
+	    	})
 			},
 			//点击编辑
 			edit(list, index) {
@@ -129,7 +165,7 @@
 	overflow:auto;
 }
 .page{
-	position:fixed;
+	//position:fixed;
 	width: 100%;
 	bottom: 30px;
 	left: 0px;

@@ -59,6 +59,7 @@
 </template>
 <script>
 import {mapGetters, mapActions} from 'vuex';
+import {get, post} from '../../common/js/api.js';
 	export default {
 		data() {
 			return {
@@ -98,24 +99,22 @@ import {mapGetters, mapActions} from 'vuex';
 					this.message = '用户名不能为空';
 				} else if(this.login.password == '') {
 					this.message = '密码不能为空';
-				} else {
-					this.$http.post('/api/api/user/login',this.login).then((res) =>{
-						console.log('res',res.body)
-						if(res.body.code == 2) {
-							this.message = res.body.message;
+				} else {				
+					post('api/user/login',this.login).then((res) =>{
+						if(res.code == 2) {
+							this.message = res.message;
 						} else {
-							this.message = res.body.message;
+							this.message = res.message;
 							var that = this;
 							setTimeout(() => {
 								that.messge = '';  
-								that.userInfo = res.body.userInfo;
-								console.log('设置vuex',that.userInfo);
+								that.userInfo = res.userInfo;
 								that.setUserInfo(that.userInfo);
 								that.type = 'logined';
 							}, 500);
 						}
 					},(res) =>{
-						this.message = res.body.message;
+						this.message = res.message;
 					})
 				}
 				
@@ -131,33 +130,30 @@ import {mapGetters, mapActions} from 'vuex';
 					this.message ='两次输入的密码不一致';
 					return false;
 				} else {
-					this.$http.post('/api/api/user/register',this.register).then((res) => {
-					  if(res.body.code == 4) {
-					  	this.message=res.body.message;
+					post('api/user/register',this.register).then((res) => {
+					  if(res.code == 4) {
+					  	this.message=res.message;
 					  } else {
 					  	var that = this;
-					  	this.message = res.body.message;
+					  	this.message = res.message;
 					  	setTimeout(function(){
 					  		that.message = '';
 					  		that.type = 'login';
 					  	},500);
 					  }
 					},(res) =>{
-					  this.message = res.body.message;
+					  this.message = res.message;
 					});
 				}
 			},
 			quit() {
-				this.$http.get('/api/api/user/layout').then((res) => {
-					console.log('layout',res)
-					if(res.body.code == 0){
+				get('api/user/layout').then((res) => {
+					if(res.code == 0){
 						this.type = 'register';
 						this.message = '';
 					}				
 				}).catch( 
-					function() {
-						console.log('退出错误')
-					}
+					console.log('退出错误')
 				)
 			},
 			moc(){
@@ -166,7 +162,6 @@ import {mapGetters, mapActions} from 'vuex';
 			}
 		},
 		mounted() {
-			console.log("有从新加载login")
 			this.type = this.userInfo && this.userInfo.username ? 'logined':'register';		
 		}
 	}

@@ -1,9 +1,24 @@
 // see http://vuejs-templates.github.io/webpack for documentation.
-var path = require('path')
+var path = require('path');
+var fs = require('fs');
 
+//获取环境参数
+var env = process.argv[2];
+
+if (['dev', 'test', 'prod'].indexOf(env) < 0) {
+  env = 'dev';
+}
+
+//获取环境对应配置 .env.js
+var envopt = path.resolve(__dirname, './' + env + '.env');
+
+if (!fs.existsSync(envopt + '.js')) {
+  envopt = path.resolve(__dirname, './dev.env');
+};
 module.exports = {
   build: {
     env: require('./prod.env'),
+    envopt: envopt,
     index: path.resolve(__dirname, '../dist/index.html'),
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
@@ -23,6 +38,7 @@ module.exports = {
   },
   dev: {
     env: require('./dev.env'),
+    envopt: path.resolve(__dirname, './dev.env'),
     port: 8080,
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',

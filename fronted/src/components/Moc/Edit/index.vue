@@ -47,7 +47,8 @@
 	</div>
 </template>
 <script>
-import {markdown} from 'markdown';
+import {markdown} from 'markdown'
+import {get, post} from '../../../common/js/api.js'
 import '../../../common/css/markdown.css';
 	export default{
 		data(){
@@ -71,6 +72,8 @@ import '../../../common/css/markdown.css';
 			console.log(this.$route.query);
 			if(this.$route.query && this.$route.query.articalId) {
 				this.aritcalId = this.$route.query.articalId;
+				//若是再次编辑，获取文章内容
+				this.getContent(this.aritcalId);
 			}
 		},
 		methods:{
@@ -84,7 +87,6 @@ import '../../../common/css/markdown.css';
 			//发送添加分类请求
 			sendAddReq() {
 				const  categoryInfo ={name:this.categoryValue};
-				console.log(categoryInfo);
 				//先判断当前列表中有没有categoryValue
 				var isHas = this.Categories.some((item, index) => {
 					return item.name === this.categoryValue
@@ -95,10 +97,10 @@ import '../../../common/css/markdown.css';
 				 	return;
 				}
 				if(this.categoryValue) {
-					this.$http.post("/api/admin/category/add",categoryInfo).then((res) => {
-          	if(res.body.code == 200) {
-          		this.Categories.push(res.body.data);
-          		this.articalData.category = res.body.data._id;
+					post("admin/category/add",categoryInfo).then((res) => {
+          	if(res.code == 200) {
+          		this.Categories.push(res.data);
+          		this.articalData.category = res.data._id;
             	this.message('分类添加成功');
           	} else {
            	 	this.$message('添加失败,请稍后重试');
@@ -111,9 +113,9 @@ import '../../../common/css/markdown.css';
 			},
 			//发送分类获取接口
 			getCategories() {
-				this.$http.get("/api/admin/category/get").then((res) => {
-	        if(res.body.code == 200) {
-	        	res.body.data.forEach(item => {
+				get("admin/category/get").then((res) => {
+	        if(res.code == 200) {
+	        	res.data.forEach(item => {
 	        		this.Categories.push(item);
 	        	});
 	        } else {
@@ -133,8 +135,8 @@ import '../../../common/css/markdown.css';
 				if(this.aritcalId) {//如果是编辑
 					data._id = this.articalId;
 				}
-				this.$http.post("/api/admin/artical/edit",data).then((res) => {
-          	if(res.body.code == 200) {
+				post("admin/artical/edit",data).then((res) => {
+          	if(res.code == 200) {
             	this.message('新建文章成功');
             	//跳转到文章预览页
           	} else {

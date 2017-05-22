@@ -2,7 +2,7 @@
 * @Author: linyajing
 * @Date:   2017-02-28 22:43:11
 * @Last Modified by:   linyajing
-* @Last Modified time: 2017-04-22 01:05:45
+* @Last Modified time: 2017-05-23 00:28:45
 */
 
 'use strict';
@@ -12,7 +12,7 @@ var router = express.Router();
 //引入用户模型类
 var User = require('../models/User.js');
 //引入分类模型类
-var Category = require('../models/Catalog.js');
+var Category = require('../models/Category.js');
 //引入文章模型类
 var Artical = require("../models/Artical.js");
 
@@ -22,7 +22,7 @@ var Artical = require("../models/Artical.js");
 var responseData;
 router.use(function(req,res,next) {
   responseData = {
-    code:0,
+    code:200,
     message:''
   };
   next();
@@ -47,7 +47,7 @@ router.post("/users",function(req,res,next){
   	User.find().limit(limit).skip(skip).then(function(users) {
   	    var responseData={};
   	    if(users){
-  	    	responseData.code = "200",
+  	    	responseData.code = 200,
   	    	responseData.meta = {
   	    		"currentPage":currentPage,
   	    		"limit":limit,
@@ -58,7 +58,7 @@ router.post("/users",function(req,res,next){
   	    	res.json(responseData);
   	    	return ;
   	    } else {
-  	    	responseData.code = "200",
+  	    	responseData.code = 0,
   	    	responseData.message("没有注册用户");
           res.json(responseData);
           return ;
@@ -70,13 +70,11 @@ router.post("/users",function(req,res,next){
 /*新建分类*/
 router.post("/category/add",function(req,res,next){
   const name = req.body.name;
-  //console.log('请求的name',name);
-  //console.log('用户类型',req.userInfo.isAdmin);
   if(req.userInfo.isAdmin) {
     var category = new Category({ name:name});
     category.save((err,newName) => {
       if(err) {
-        responseData.code=400;//出错
+        responseData.code = 0;//出错
         responseData.message = "分类添加失败";
         res.json(responseData);
       } else {
@@ -96,11 +94,10 @@ router.post("/category/add",function(req,res,next){
 //获取文章分类
 router.get("/category/get",function(req,res,next){
   Category.find().then((categloryInfo) => {
-    console.log('返回所有分类信息',categloryInfo);
     var data = categloryInfo.map((item, index) => {
      return {name:item.name,_id:item._id}
     });
-    responseData.code= 200;//出错
+    responseData.code= 200;
     responseData.message = "分类获取成功";
     responseData.data = data;
     res.json(responseData);
@@ -116,27 +113,25 @@ router.post("/artical/edit",function(req,res,next){
   let artical=null;
   if(req.body._id) {//如果是编辑
     Artical.findById(req.body._id, function (err, articalInfo){
-      console.log('找到原文章数据',articalInfo);
       if(!err){
         articalInfo.title = title;
         articalInfo.desc = desc;
         articalInfo.category = category;
         articalInfo.content = content;
         articalInfo.update(function(err,newArticalInfo){
-          console.log('编辑完文章',newArticalInfo)
           if(!err){
             responseData.code = 200;
             responseData.message = "编辑文章成功";
             responseData.data = newArticalInfo;
             return;
           } else {
-            responseData.code = 400;
+            responseData.code = 0 ;
             responseData.message = "编辑文章失败";
             return;
           }
         });
       } else {
-        responseData.code = 400;
+        responseData.code = 0 ;
         responseData.message = "编辑文章失败";
         return;
       }
@@ -152,7 +147,7 @@ router.post("/artical/edit",function(req,res,next){
     artical.save((err,newArtical) => {
       console.log('新添加的分类',newArtical);
       if(err) {
-        responseData.code=400;//出错
+        responseData.code= 0 ;//出错
         responseData.message = "文章添加失败";
         res.json(responseData);
       } else {
@@ -168,7 +163,7 @@ router.post("/artical/edit",function(req,res,next){
 
 //获取文章列表
 router.post("/artical/list",function(req,res,next){
-  console.log('获取文章',req.body)
+  console.log('获取文章')
   var currentPage = Number(req.body.currentPage);
   var limit = Number(req.body.limit);
   var pages = 0;
@@ -178,7 +173,8 @@ router.post("/artical/list",function(req,res,next){
     currentPage = Math.max(currentPage, 1 );
     var skip = (currentPage - 1) * limit;
 
-    User.find().limit(limit).skip(skip).then(function(articals) {
+    Artical.find().limit(limit).skip(skip).
+      populate({path:'category', select:{name:1,_id:1}}).then(function(articals) {
         var responseData={};
         if(articals){
           responseData.code = 200,
@@ -192,7 +188,7 @@ router.post("/artical/list",function(req,res,next){
           res.json(responseData);
           return ;
         } else {
-          responseData.code = 200,
+          responseData.code = 0 ,
           responseData.message("没有文章");
           res.json(responseData);
           return ;
@@ -200,6 +196,34 @@ router.post("/artical/list",function(req,res,next){
     });
   });
 });
+
+/*
+获取文章详情
+ */
+router.post("/artical/detail",function(req,res,next){
+  Artical.findById(req.body.id).then((articalInfo) =>{
+    if(articalInfo){
+      Artical.update({_id:req.body.id},{views:articalInfo.views+1}, function (error) {  
+        if (!error) {
+          articalInfo.views = articalInfo.views+1;
+          responseData.code = 200;
+          responseData.message = "获取文章成功";
+          responseData.data = articalInfo;  
+        } else {  
+          responseData.code = 0 ;
+          responseData.message = "获取文章失败";  
+        }  
+      });      
+    } else {
+      responseData.code = 0 ;
+      responseData.message = "获取文章失败";
+    }
+    console.log(responseData);
+    res.json(responseData);
+    return;
+  });
+});
+
 
 
 module.exports = router;

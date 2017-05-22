@@ -17,9 +17,11 @@ export default {
       activeIndex: 'users'
     };
   },
+  mounted() {
+    this.activeIndex = this.$route.name;
+  },
   methods: {
     handleSelect(key, keyPath) {
-      console.log(key, keyPath);
       this.$router.replace({name:key});
     }
   }

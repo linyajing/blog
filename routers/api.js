@@ -6,23 +6,24 @@ var User = require('../models/User.js');
 var responseData;
 router.use(function(req,res,next) {
 	responseData = {
-		code:0,
+		code:200,
 		message:''
 	};
 	next();
 });
+
 /*
 	首页加载获取cookie
  */
 router.get("/user/userInfo",function(req,res,next) {
 	if(req.userInfo._id) {
-		responseData.code = 200;
 		responseData.message = '获取登录信息成功';
 		responseData.data={};
 		responseData.data._id = req.userInfo._id;
 		responseData.data.username = req.userInfo.username;
 		responseData.data.isAdmin = req.userInfo.isAdmin;
 	}else {
+    responseData.code = 0;
 		responseData.message = '没有登录信息';
 	}
 	res.json(responseData);
@@ -44,7 +45,7 @@ router.post('/user/register',function(req,res,next) {
 		username:username
 	}).then((userInfo) =>{
 		if(userInfo) {
-			responseData.code = 4;
+			responseData.code = 0 ;
 			responseData.message = '用户名已经被注册';
 			res.json(responseData);
 			return;
@@ -80,7 +81,7 @@ router.post("/user/login",function(req,res,next){
 
 	User.findOne(query).then((userInfo) => {
 		if(!userInfo) {
-			responseData.code = 2;
+			responseData.code = 0;
 			responseData.message = '用户名或密码错误';
 			res.json(responseData);
 			return;

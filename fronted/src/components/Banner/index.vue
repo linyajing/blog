@@ -13,6 +13,7 @@
 	</div>
 </template>
 <script>
+import {get} from '../../common/js/api.js';
 	export default {
 		data() {
 			return{
@@ -23,14 +24,10 @@
 			}
 		},
 		mounted() {
-			this.$http.get("/api/admin/category/get").then((res) => {
-        if(res.body.code == 200) {
-        	res.body.data.forEach(item => {
-        		this.list.push({name:item.name,isActive:false});
-        	});
-        } else {
-         	this.$message('获取分类失败,请稍后重试');
-        }
+      get("admin/category/get").then((res) => {
+      	res.data.forEach(item => {
+      		this.list.push({name:item.name,isActive:false});
+      	});
       }).catch(e => {
       	this.$message(e);
       });

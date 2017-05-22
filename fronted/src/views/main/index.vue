@@ -31,7 +31,6 @@ import Artical from "../../components/Artical/index.vue"
   display: flex;
   .main{
 		flex:1;
-		// border: 1px solid #333;
   }
 }
 </style>
