@@ -2,7 +2,7 @@
 * @Author: linyajing
 * @Date:   2017-02-28 22:43:11
 * @Last Modified by:   linyajing
-* @Last Modified time: 2017-05-23 00:28:45
+* @Last Modified time: 2017-05-30 15:03:50
 */
 
 'use strict';
@@ -163,7 +163,6 @@ router.post("/artical/edit",function(req,res,next){
 
 //获取文章列表
 router.post("/artical/list",function(req,res,next){
-  console.log('获取文章')
   var currentPage = Number(req.body.currentPage);
   var limit = Number(req.body.limit);
   var pages = 0;
@@ -173,7 +172,7 @@ router.post("/artical/list",function(req,res,next){
     currentPage = Math.max(currentPage, 1 );
     var skip = (currentPage - 1) * limit;
 
-    Artical.find().limit(limit).skip(skip).
+    Artical.find().limit(limit).skip(skip).sort({ctime:-1}).
       populate({path:'category', select:{name:1,_id:1}}).then(function(articals) {
         var responseData={};
         if(articals){
@@ -208,19 +207,22 @@ router.post("/artical/detail",function(req,res,next){
           articalInfo.views = articalInfo.views+1;
           responseData.code = 200;
           responseData.message = "获取文章成功";
-          responseData.data = articalInfo;  
+          responseData.data = articalInfo;
+          res.json(responseData);
+          return;  
         } else {  
           responseData.code = 0 ;
-          responseData.message = "获取文章失败";  
+          responseData.message = "获取文章失败";
+          res.json(responseData);
+          return;  
         }  
       });      
     } else {
       responseData.code = 0 ;
       responseData.message = "获取文章失败";
+      res.json(responseData);
+      return;
     }
-    console.log(responseData);
-    res.json(responseData);
-    return;
   });
 });
 

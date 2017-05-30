@@ -52,7 +52,8 @@ import {formatTime} from '../../common/js/methods.js'
           this.articalData = res.data.map((item, index) => {
           	 let itemTrans = Object.assign({}, item);
           	 itemTrans.ctime = formatTime(item.ctime);
-          	 itemTrans.commentNum = item.comment.length;
+          	 //itemTrans.commentNum = item.comment.length;
+          	 itemTrans.commentNum = 0;
           	 return itemTrans;
           });
         } else {

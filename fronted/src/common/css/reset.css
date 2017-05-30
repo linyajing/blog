@@ -2,8 +2,11 @@
 * @Author: linyajing
 * @Date:   2017-03-05 15:54:25
 * @Last Modified by:   linyajing
-* @Last Modified time: 2017-03-05 17:11:59
+* @Last Modified time: 2017-05-30 16:48:43
 */
+*{
+	font-family: -apple-system,SF UI Text,Arial,PingFang SC,Hiragino Sans GB,Microsoft YaHei,WenQuanYi Micro Hei,sans-serif;
+}
 body,p,ul,li,dd,dt,dl,h1,h2,h3,h4,h5,h6{
 	margin: 0;
 	padding: 0;

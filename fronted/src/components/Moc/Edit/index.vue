@@ -47,7 +47,8 @@
 	</div>
 </template>
 <script>
-import {markdown} from 'markdown'
+import {markdown} from 'markdown';
+import marked from 'marked';
 import {get, post} from '../../../common/js/api.js'
 import '../../../common/css/markdown.css';
 	export default{
@@ -78,7 +79,8 @@ import '../../../common/css/markdown.css';
 		},
 		methods:{
 			changeHtml() {
-				this.markdownContent = markdown.toHTML(this.articalData.content);
+				//this.markdownContent = markdown.toHTML(this.articalData.content);
+				this.markdownContent = marked(this.articalData.content)
 				console.log(this.markdownContent);
 			},
 			addCategory() {
@@ -136,15 +138,14 @@ import '../../../common/css/markdown.css';
 					data._id = this.articalId;
 				}
 				post("admin/artical/edit",data).then((res) => {
-          	if(res.code == 200) {
-            	this.message('新建文章成功');
-            	//跳转到文章预览页
-          	} else {
-           	 	this.$message('新建文章失败,请稍后重试');
-          	}
-        	}).catch(e => {
-        		this.$message(e);
-        	});
+        	if(res.code == 200) {
+          	this.$message('新建文章成功');
+        	} else {
+         	 	this.$message('新建文章失败,请稍后重试');
+        	}
+      	}).catch(e => {
+      		this.$message(e);
+      	});
 			}
 		}
 	}

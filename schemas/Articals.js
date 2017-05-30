@@ -2,7 +2,7 @@
 * @Author: linyajing
 * @Date:   2017-03-21 21:51:41
 * @Last Modified by:   linyajing
-* @Last Modified time: 2017-05-09 22:52:49
+* @Last Modified time: 2017-05-30 21:37:34
 */
 
 var mongoose = require('mongoose');
@@ -24,13 +24,12 @@ module.exports = new mongoose.Schema({
 		 type: String,
 		 default:''
 	},
-	comment: {
-		type: Array,
-		default:[]
+	comment:{
+		type:mongoose.Schema.Types.ObjectId,
+		ref:"Comment"
 	},
 	content: {
 		type: String,
 		default:''
 	}
-
 })

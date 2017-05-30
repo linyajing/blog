@@ -10,12 +10,18 @@
 			</div>
 			<div class="show-content" v-html="markdownContent"></div>
 		</div>
+		<div class="detail-comment"> 
+			<Send></Send>
+			<Comment></Comment>
+		</div>
 	</div>
 </template>
 <script>
 	import {post} from '../../../common/js/api.js';
 	import {formatTime} from '../../../common/js/methods.js';
 	import Head from '../../Head/index.vue';
+	import Send from '../comment/sendComment.vue';
+	import Comment from '../comment/index.vue';
 	import {markdown} from 'markdown';
 	export default {
 		data() {
@@ -42,11 +48,13 @@
 			
 		},
 		components:{
-			vHead:Head
+			vHead:Head,
+			Send,
+			Comment,
 		}
 	}
 </script>
-<style lang="scss">
+<style lang="scss" scope>
 	.content{
 		text-align: center;
 		h1{
@@ -81,6 +89,9 @@
 		    font-family: -apple-system,SF UI Text,Arial,PingFang SC,Hiragino Sans GB,Microsoft YaHei,WenQuanYi Micro Hei,sans-serif;
 			}
 		}
+	}
+	.detail-comment{
+		padding-bottom: 200px;
 	}
 	
 </style>
