@@ -16,14 +16,14 @@
       <el-table-column
         label="用户性质"
         >
-        <template scope="scope">
+        <template slot-scope="scope">
           <span>{{ scope.row.isAdmin?'管理员':'普通用户' }}</span>
         </template>
       </el-table-column>
 	    <el-table-column
         label="操作"
         >
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-button type="text" size="small" @click="del(scope.row, scope.$index)">删除</el-button>
         </template>
 	    </el-table-column>
@@ -53,7 +53,7 @@ import {post} from '../../../common/js/api.js';
       		pageSize:10,
       		currentPage:1,
       		total:0
-      	},     	
+      	},
         usersData: []
       }
     },

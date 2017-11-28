@@ -22,7 +22,7 @@
 	    <el-table-column
 	      label="上传时间"
 	      >
-	      <template scope="scope">
+	      <template slot-scope="scope">
 	      	<span>
 	      		{{scope.row.ctime}}
 	      	</span>
@@ -46,7 +46,7 @@
 	    <el-table-column
         label="操作"
         >
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-button type="text" size="small" @click="edit(scope.row, scope.$index)">编辑</el-button>
         </template>
 	    </el-table-column>
@@ -118,7 +118,7 @@ import {post} from '../../../common/js/api.js';
 	        } else {
 	          this.$message('文章获取失败');
 	        }
-	    	})			  
+	    	})
 			},
 			//当前页改变时触发
 			handleCurrentChange(currentPage){

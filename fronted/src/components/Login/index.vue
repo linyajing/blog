@@ -3,7 +3,7 @@
 		<div class="login form" v-if="type==='login'">
 			<h2><span>登录</span></h2>
 			<ul>
-				<li>				
+				<li>
 					<label>用户名:</label>
 					<input type="text" name="username" v-model="login.username">
 				</li>
@@ -25,7 +25,7 @@
 		<div class="register form" v-if="type==='register'">
 			<h2><span>注册</span></h2>
 			<ul>
-				<li>				
+				<li>
 					<label>用户名:</label>
 					<input type="text" name="username" v-model="register.username">
 				</li>
@@ -76,48 +76,49 @@ import {get, post} from '../../common/js/api.js';
 				message:''
 			}
 		},
-		computed:{
+		computed: {
 			...mapGetters([
 				'userInfo'
 			]),
 		},
 		watch:{
-			userInfo:{
-				handler:function(val,oldVal){
-					console.log(val,oldVal,'watch');
+			userInfo: {
+				handler: function (val, oldVal){
+          console.log(val, oldVal);
 					this.type  = val && val.username ? 'logined':'register';
 				},
-				deep:true
+				deep: true
 			}
 		},
 		methods:{
 			...mapActions([
 				'setUserInfo'
-			]),
+      ]),
+      // 点击登录按钮
 			doLogin() {
 				if(this.login.username == '') {
 					this.message = '用户名不能为空';
 				} else if(this.login.password == '') {
 					this.message = '密码不能为空';
-				} else {				
+				} else {
 					post('api/user/login',this.login).then((res) =>{
+            console.log(res);
 						if(res.code == 2) {
 							this.message = res.message;
 						} else {
 							this.message = res.message;
 							var that = this;
 							setTimeout(() => {
-								that.messge = '';  
-								that.userInfo = res.userInfo;
-								that.setUserInfo(that.userInfo);
-								that.type = 'logined';
+                that.messge = '';
+                that.setUserInfo(res.userInfo);
+                that.type = 'logined';
 							}, 500);
 						}
-					},(res) =>{
+					}).catch((res) => {
 						this.message = res.message;
 					})
 				}
-				
+
 			},
 			doRegist() {
 				if(this.register.username ==""){
@@ -146,15 +147,20 @@ import {get, post} from '../../common/js/api.js';
 					});
 				}
 			},
+      /**
+       * 点击退出按钮,清除cookie
+       */
 			quit() {
 				get('api/user/layout').then((res) => {
-					if(res.code == 0){
+          console.log(res);
+					if(res.code == 200){
 						this.type = 'register';
-						this.message = '';
-					}				
-				}).catch( 
+            this.message = '';
+            window.location.reload();
+					}
+				}).catch(e => {
 					console.log('退出错误')
-				)
+        });
 			},
 			moc(){
 				//这里需要根据用户类型决定跳转到那个路由
@@ -162,7 +168,7 @@ import {get, post} from '../../common/js/api.js';
 			}
 		},
 		mounted() {
-			this.type = this.userInfo && this.userInfo.username ? 'logined':'register';		
+			this.type = this.userInfo && this.userInfo.username ? 'logined':'register';
 		}
 	}
 </script>

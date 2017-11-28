@@ -11,8 +11,8 @@ const state = {
 }
 
 const mutations = {
-	SETUSERINFO(state,data) {
-		console.log('vuex',data)
+	SETUSERINFO: (state, data) => {
+		console.log('vuex',state, data)
 		state.userInfo = data;
 	},
 }

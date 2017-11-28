@@ -70,15 +70,14 @@ app.use((req,res,next) => {
 	}
 	next();
 	});
-/*
-根据不同的功能划分模块
+/**
+ * 根据不同的功能划分模块
  */
 app.use("/admin",require("./routers/admin"));
 //在api程序没有设置之前，先注释，否则会报错
 app.use("/api",require("./routers/api"));
 app.use("/",require("./routers/main"));
 //连接数据库
-//mongoose.Promise = require('bluebird');
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost:27018/blog',function(err) {
 	if(err) {

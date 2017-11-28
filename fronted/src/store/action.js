@@ -1,3 +1,3 @@
 export const actions = {
-	setUserInfo({commit},data){commit('SETUSERINFO',data)}
+	setUserInfo: ({commit}, data) => {commit('SETUSERINFO', data) },
 }
